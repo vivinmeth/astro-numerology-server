@@ -6,16 +6,26 @@ from astrology.models import PlanetZodiacMap
 
 # Create your views here.
 
-IDs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+IDs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+       "BR",
+       "சூரி", "சந்", "செவ்", "புத", "குரு", "சுக்", "சனி", "ராகு", "கேது"
+       ]
 Inputs = ['LAG', 'Deg', 'Min', 'Sec']
-Columns = Inputs + ['DecimalDeg', '1', 'DecimalDeg - 1', '5', 'DecimalDeg - 5', '7', 'DecimalDeg - 7', '9',
-                    'DecimalDeg - 9']
+Columns = Inputs + ['DecimalDeg',
+                    '1', 'DecimalDeg - 1', 'RA - 1', 'NA - 1', 'UA - 1',
+                    '5', 'DecimalDeg - 5', 'RA - 5', 'NA - 5', 'UA - 5',
+                    '7', 'DecimalDeg - 7', 'RA - 7', 'NA - 7', 'UA - 7',
+                    '9', 'DecimalDeg - 9', 'RA - 9', 'NA - 9', 'UA - 9',
+                    ]
 
 
 def star_aspect(req):
     template = "star_aspect_home.html"
+    data = start_aspects_init()
+    print("DATA:",data)
     context = {
         "IDs": IDs,
+        "data": data,
 
     }
     return render(req, template, context)
@@ -24,6 +34,7 @@ def star_aspect(req):
 def calc_star_aspects(req):
     data = calculate_decimal_degree(req)
     #print("data:", data)
+    print("DATA:", data)
     template = "star_aspect_home.html"
     context = {
         "data": data,
@@ -32,12 +43,28 @@ def calc_star_aspects(req):
     return render(req, template, context)
 
 
+def start_aspects_init():
+    data = {}
+
+    for i in IDs:
+        set = {}
+        for j in Columns:
+            set[j] = 0
+        data[i]=set
+    return data
+
 def calculate_decimal_degree(req):
     ddSet = {}
     for i in IDs:
         set = {}
-        for j in Inputs:
-            set[j] = req.POST[j + str(i)]
+        print("Current:", i)
+        if str(i) == "BR":
+            for j in Inputs:
+                set[j] = ""
+            continue
+        else:
+            for j in Inputs:
+                set[j] = req.POST[j + str(i)]
         LAG = int(set['LAG'])
         Deg = int(set['Deg'])
         Min = int(set['Min'])
@@ -92,7 +119,10 @@ def fetch_pzm(DD):
     DDList = []
     for pzm in pzmdata:
         DDList.append(pzm.DecimalDeg)
-    print("PMZ:MAX:", DDList, DD, max(DDList))
-    pzm = pzmdata.get(DecimalDeg = max(DDList))
+    if len(DDList) == 0:
+        pzm = PlanetZodiacMap.objects.get(id=1)
+    else:
+        print("PMZ:MAX:", DDList, DD, max(DDList))
+        pzm = pzmdata.get(DecimalDeg = max(DDList))
     print("Final PMZ::", pzm.id, pzm.DecimalDeg, DD)
     return pzm

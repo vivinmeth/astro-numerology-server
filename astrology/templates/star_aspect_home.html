@@ -12,77 +12,46 @@
             border-collapse: collapse;
         }
         th, td{
-            padding: 10px;
+            padding: 2px;
         }
     </style>
 </head>
 <body>
     <h3 align="center">Star Aspects</h3>
-    {% if not isCalculated %}
     <form action="{% url 'astrology:calculate_star' %}" method="post">
-        <table>
-        <tr>
-            <th>ID</th>
-            <th>LAG</th>
-            <th>Deg</th>
-            <th>Min</th>
-            <th>Sec</th>
-
-
-
-        </tr>
-        {% for i in IDs %}
-            <tr>
-                <td>{{i}}</td>
-                <td>
-                    <input type="number" min="0" max="12" name="LAG{{i}}">
-                </td>
-                <td>
-                    <input type="number" min="0" max="360" name="Deg{{i}}">
-                </td>
-                <td>
-                    <input type="number" min="0" max="60" name="Min{{i}}">
-                </td>
-                <td>
-                    <input type="number" min="0" max="60" name="Sec{{i}}">
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
         <button type="submit">Calculate</button>
         {% csrf_token %}
-    </form>
-    {% else %}
         <table>
         <tr>
             <th>ID</th>
-            <th>LAG</th>
-            <th>Deg</th>
-            <th>Min</th>
-            <th>Sec</th>
-            <th>DecimalDeg</th>
+            <th>L</th>
+            <th>D</th>
+            <th>M</th>
+            <th>S</th>
+            <th>To</th>
             <th>1</th>
-            <th>DecimalDeg[1]</th>
-            <th>RA[1]</th>
-            <th>NA[1]</th>
-            <th>UA[1]</th>
+            <th>To</th>
+            <th>RA</th>
+            <th>NA</th>
+            <th>UA</th>
             <th>5</th>
-            <th>DecimalDeg[5]</th>
-            <th>RA[5]</th>
-            <th>NA[5]</th>
-            <th>UA[5]</th>
+            <th>To</th>
+            <th>RA</th>
+            <th>NA</th>
+            <th>UA</th>
             <th>7</th>
-            <th>DecimalDeg[7]</th>
-            <th>RA[7]</th>
-            <th>NA[7]</th>
-            <th>UA[7]</th>
+            <th>To</th>
+            <th>RA</th>
+            <th>NA</th>
+            <th>UA</th>
             <th>9</th>
-            <th>DecimalDeg[9]</th>
-            <th>RA[9]</th>
-            <th>NA[9]</th>
-            <th>UA[9]</th>
+            <th>To</th>
+            <th>RA</th>
+            <th>NA</th>
+            <th>UA</th>
         </tr>
         {% for i, row in data.items %}
+            {% if not i == "BR" %}
             {% if forloop.counter|divisibleby:2 %}
                 <tr style="background-color: rgba(0,0,0,0.3)">
             {% else %}
@@ -90,12 +59,28 @@
             {% endif %}
                 <td>{{i}}</td>
                 {% for key, value in row.items %}
-                    <td>{{value}}</td>
+                    {% if key == "LAG" %}
+                        <td> <input type="number" min="0" max="12" value="{{value}}" name="LAG{{i}}"> </td>
+                    {% elif key == "Deg" %}
+                        <td> <input type="number" min="0" max="12" value="{{value}}" name="Deg{{i}}"></td>
+                    {% elif key == "Min" %}
+                        <td> <input type="number" min="0" max="12" value="{{value}}" name="Min{{i}}"></td>
+                    {% elif key == "Sec" %}
+                        <td> <input type="number" min="0" max="12" value="{{value}}" name="Sec{{i}}"></td>
+                    {% else %}
+                        <td>{{value}}</td>
+                    {% endif %}
                 {% endfor %}
             </tr>
+            {% else %}
+                <tr style="height: 15px;">
+                    {% for key, value in row.items %}
+                        <td style="border: none;"></td>
+                    {% endfor %}
+                </tr>
+            {% endif %}
         {% endfor %}
     </table>
-    {% endif %}
-
+    </form>
 </body>
 </html>
