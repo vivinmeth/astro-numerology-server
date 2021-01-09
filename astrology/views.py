@@ -1,6 +1,5 @@
 import json
 
-from django.middleware.csrf import _get_new_csrf_token
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
@@ -48,18 +47,6 @@ def __fetch_pzm(dd):
 def angular_index(request):
     return render(request, 'index.html')
 
-
-def setup_csrf(request):
-    csrf = _get_new_csrf_token()
-    print("CSRF::", csrf)
-    msg = {
-        "msg": "New CSRF Generated",
-        "csrftoken": csrf,
-        "success": True
-    }
-    response = JsonResponse(msg, status=200)
-
-    return response
 
 def return_404(request):
     return JsonResponse({"msg": "ERROR 404: Resource not Found!", "success": False}, status=404)

@@ -18,11 +18,10 @@ from django.urls import include, path
 from django.views.generic import TemplateView
 
 
-from astrology.views import setup_csrf, angular_index
+from astrology.views import angular_index
 
 
 urlpatterns = [
-    path('get_csrftoken', setup_csrf, name="setup_csrf"),
     path('astrology/', include('astrology.urls')),
     path('admin/', admin.site.urls),
     path('', angular_index, name="ui-index"),
