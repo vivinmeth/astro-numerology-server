@@ -6,35 +6,35 @@
     <td *ngFor="let table of tableset">
       <table class="star-aspects__host-table">
         <tr>
-          <th><h3 align="center">{{table | textpretty | titlecase}}</h3></th>
+          <th><h3 align="center">{{table.name | textpretty | titlecase}}</h3></th>
         </tr>
         <tr>
           <td>
-            <table class="star-aspects__table star-aspects__table__{{table}}" *ngIf="tables[table]">
+            <table class="star-aspects__table star-aspects__table__{{table}}" *ngIf="tables[table.key]">
               <tr>
-                <th *ngFor="let column_name of tables[table]['headers']">
+                <th *ngFor="let column_name of tables[table.key]['headers']">
                   {{column_name.slice(0,2)}}
                 </th>
               </tr>
-              <tr *ngFor="let row of tables[table]['rows']">
-                <td *ngFor="let column_name of tables[table]['headers']">
-                  <span *ngIf="column_name=== tables[table]['headers'][0]">{{row}}</span>
-                  <span *ngIf="column_name!== tables[table]['headers'][0]">
-                    <input [type]="tables[table]['row_template'][column_name]['type']"
-                           [min]="tables[table]['row_template'][column_name]['min']"
-                           [max]="tables[table]['row_template'][column_name]['max']"
-                           [value]="tables[table]['row_template'][column_name]['value']"
-                           *ngIf="tables[table]['row_template'][column_name]['isInput']"
+              <tr *ngFor="let row of tables[table.key]['rows']">
+                <td *ngFor="let column_name of tables[table.key]['headers']">
+                  <span *ngIf="column_name=== tables[table.key]['headers'][0]">{{row}}</span>
+                  <span *ngIf="column_name!== tables[table.key]['headers'][0]">
+                    <input [type]="tables[table.key]['row_template'][column_name]['type']"
+                           [min]="tables[table.key]['row_template'][column_name]['min']"
+                           [max]="tables[table.key]['row_template'][column_name]['max']"
+                           [value]="tables[table.key]['row_template'][column_name]['defaultValue']"
+                           *ngIf="tables[table.key]['row_template'][column_name]['isInput']"
                     >
-                    <span *ngIf="!tables[table]['row_template'][column_name]['isInput']">
-                      {{tables[table]['row_template'][column_name]['value']}}
+                    <span *ngIf="!tables[table.key]['row_template'][column_name]['isInput']">
+                      {{tables[table.key]['row_template'][column_name]['defaultValue']}}
                     </span>
                   </span>
                 </td>
               </tr>
             </table>
-            <h5 *ngIf="!tables[table]" class="star-aspects__warning-text">
-              Table ({{table}}) not Defined in Tables&#60;object&#62;
+            <h5 *ngIf="!tables[table.key]" class="star-aspects__warning-text">
+              Table ({{table.name}}) not Defined in Tables&#60;object&#62;
             </h5>
           </td>
         </tr>
