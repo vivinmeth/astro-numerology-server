@@ -3,6 +3,9 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { StarAspectsPage } from './pages/star-aspects/star-aspects.page';
+import { HttpClientModule, HttpClientXsrfModule} from '@angular/common/http';
+
+import { CSRFTokenService } from './services/csrftoken.service';
 
 @NgModule({
   declarations: [
@@ -10,9 +13,16 @@ import { StarAspectsPage } from './pages/star-aspects/star-aspects.page';
     StarAspectsPage
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    HttpClientModule,
+    HttpClientXsrfModule.withOptions({
+      cookieName: 'csrftoken',
+      headerName: 'X-CSRFToken',
+    }),
   ],
-  providers: [],
+  providers: [
+    CSRFTokenService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,10 +1,71 @@
+import json
+
+from django.middleware.csrf import _get_new_csrf_token
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
-from django.template import loader
 
 from astrology.models import PlanetZodiacMap
 
-# Create your views here.
+
+@require_http_methods(["GET", "POST"])
+def get_lord_planets(request):
+    dds = json.loads(request.GET.get("decimalDegs"))
+    ddset = {}
+    for dd in dds:
+        pmz = fetch_pzm(dd)
+        ddset[str(dd)] = {
+            "DD": dd,
+            "table-DD": pmz.DecimalDeg,
+            "RA": pmz.RA,
+            "NA": pmz.NA,
+            "UA": pmz.UA
+        }
+    print("DDS:", dds, type(dds), ddset)
+    return JsonResponse({"msg": "Success", "decimalDegs": ddset, "success": True}, status=200)
+
+
+def fetch_pzm(dd):
+    lower_limit = dd - 3
+    # upper_limit = dd + 2
+    pzm_data = PlanetZodiacMap.objects.filter(DecimalDeg__lte=dd).filter(DecimalDeg__gte=lower_limit)
+    print("====== PlanetZodiacMap ======")
+    dd_list = []
+    for pzm in pzm_data:
+        dd_list.append(pzm.DecimalDeg)
+    if len(dd_list) == 0:
+        pzm = PlanetZodiacMap.objects.get(id=1)
+    else:
+        print("PMZ:MAX:", dd_list, dd, max(dd_list))
+        pzm = pzm_data.get(DecimalDeg = max(dd_list))
+    print("Final PMZ::", pzm.id, pzm.DecimalDeg, dd)
+    return pzm
+
+
+@ensure_csrf_cookie
+def angular_index(request):
+    return render(request, 'index.html')
+
+
+def setup_csrf(request):
+    csrf = _get_new_csrf_token()
+    print("CSRF::", csrf)
+    msg = {
+        "msg": "New CSRF Generated",
+        "csrftoken": csrf,
+        "success": True
+    }
+    response = JsonResponse(msg, status=200)
+
+    return response
+
+def return_404(request):
+    return JsonResponse({"msg": "ERROR 404: Resource not Found!", "success": False}, status=404)
+
+
+# Deprecated
+
 
 IDs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
        "BR",
@@ -109,20 +170,3 @@ def calculate_decimal_degree(req):
         # print("i::", i, one, five, seven, nine)
         ddSet[str(i)]=set
     return ddSet
-
-
-def fetch_pzm(DD):
-    lower_limit = DD - 3
-    upper_limit = DD + 2
-    pzmdata = PlanetZodiacMap.objects.filter(DecimalDeg__lte = DD).filter(DecimalDeg__gte = lower_limit)
-    print("============")
-    DDList = []
-    for pzm in pzmdata:
-        DDList.append(pzm.DecimalDeg)
-    if len(DDList) == 0:
-        pzm = PlanetZodiacMap.objects.get(id=1)
-    else:
-        print("PMZ:MAX:", DDList, DD, max(DDList))
-        pzm = pzmdata.get(DecimalDeg = max(DDList))
-    print("Final PMZ::", pzm.id, pzm.DecimalDeg, DD)
-    return pzm
