@@ -1,1 +1,67 @@
-<p>star-aspects works!</p>
+<h2 class="star-aspects__head">Star Aspects</h2>
+<button type="button" (click)="computeDegDec()">COMPUTE</button>
+
+<table>
+  <tr *ngFor="let tableset of tables.order">
+    <td *ngFor="let table of tableset">
+      <table class="star-aspects__host-table">
+        <tr>
+          <th><h3 align="center">{{table | textpretty | titlecase}}</h3></th>
+        </tr>
+        <tr>
+          <td>
+            <table class="star-aspects__table star-aspects__table__{{table}}" *ngIf="tables[table]">
+              <tr>
+                <th *ngFor="let column_name of tables[table]['headers']">
+                  {{column_name.slice(0,2)}}
+                </th>
+              </tr>
+              <tr *ngFor="let row of tables[table]['rows']">
+                <td *ngFor="let column_name of tables[table]['headers']">
+                  <span *ngIf="column_name=== tables[table]['headers'][0]">{{row}}</span>
+                  <span *ngIf="column_name!== tables[table]['headers'][0]">
+                    <input [type]="tables[table]['row_template'][column_name]['type']"
+                           [min]="tables[table]['row_template'][column_name]['min']"
+                           [max]="tables[table]['row_template'][column_name]['max']"
+                           [value]="tables[table]['row_template'][column_name]['value']"
+                           *ngIf="tables[table]['row_template'][column_name]['isInput']"
+                    >
+                    <span *ngIf="!tables[table]['row_template'][column_name]['isInput']">
+                      {{tables[table]['row_template'][column_name]['value']}}
+                    </span>
+                  </span>
+                </td>
+              </tr>
+            </table>
+            <h5 *ngIf="!tables[table]" class="star-aspects__warning-text">
+              Table ({{table}}) not Defined in Tables&#60;object&#62;
+            </h5>
+          </td>
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>
+
+<!--
+
+<tr>
+    <th>ID</th>
+    <th *ngFor="let col_name of Columns;">
+      {{col_name.slice(0,2)}}
+    </th>
+  </tr>
+  <tr *ngFor="let id of IDs">
+    <td>{{id}}</td>
+    <td *ngFor="let col_name of Columns">
+    <span *ngIf="col_name==='LAG'"> <input type="number" min="0" max="12" value="{{value}}" name="LAG{{i}}"> </span>
+
+    <span *ngIf="col_name==='Deg'"> <input type="number" min="0" max="12" value="{{value}}" name="Deg{{i}}"></span>
+    <span *ngIf="col_name==='Min'"> <input type="number" min="0" max="12" value="{{value}}" name="Min{{i}}"></span>
+    <span *ngIf="col_name==='Sec'"> <input type="number" min="0" max="12" value="{{value}}" name="Sec{{i}}"></span>
+    <span *ngIf="col_name!=='LAG' && col_name!=='Deg' && col_name!=='Min' && col_name!=='Sec' && col_name!=='ID'">0</span>
+    </td>
+  </tr>
+
+-->

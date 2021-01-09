@@ -6,11 +6,13 @@ import { StarAspectsPage } from './pages/star-aspects/star-aspects.page';
 import { HttpClientModule, HttpClientXsrfModule} from '@angular/common/http';
 
 import { CSRFTokenService } from './services/csrftoken.service';
+import {TextPrettyPipe} from './pipes/text-pretty.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
-    StarAspectsPage
+    StarAspectsPage,
+    TextPrettyPipe
   ],
   imports: [
     BrowserModule,
