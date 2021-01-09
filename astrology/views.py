@@ -9,12 +9,12 @@ from django.shortcuts import render
 from astrology.models import PlanetZodiacMap
 
 
-@require_http_methods(["GET", "POST"])
+@require_http_methods(["GET"])
 def get_lord_planets(request):
     dds = json.loads(request.GET.get("decimalDegs"))
     ddset = {}
     for dd in dds:
-        pmz = fetch_pzm(dd)
+        pmz = __fetch_pzm(dd)
         ddset[str(dd)] = {
             "DD": dd,
             "table-DD": pmz.DecimalDeg,
@@ -26,7 +26,8 @@ def get_lord_planets(request):
     return JsonResponse({"msg": "Success", "decimalDegs": ddset, "success": True}, status=200)
 
 
-def fetch_pzm(dd):
+# utility class to fetch PlanetZodiacMap using DecimalDeg as input from DB. DO NOT use as View
+def __fetch_pzm(dd):
     lower_limit = dd - 3
     # upper_limit = dd + 2
     pzm_data = PlanetZodiacMap.objects.filter(DecimalDeg__lte=dd).filter(DecimalDeg__gte=lower_limit)
