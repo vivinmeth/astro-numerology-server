@@ -7,6 +7,7 @@ import { HttpClientModule, HttpClientXsrfModule} from '@angular/common/http';
 
 import { CSRFTokenService } from './services/csrftoken.service';
 import {TextPrettyPipe} from './pipes/text-pretty.pipe';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import {TextPrettyPipe} from './pipes/text-pretty.pipe';
       cookieName: 'csrftoken',
       headerName: 'X-CSRFToken',
     }),
+    FormsModule,
   ],
   providers: [
     CSRFTokenService

@@ -125,7 +125,7 @@ export class TableTemplateService {
 
 
   tableTemplateGenerator(orderObj): any{
-    let tableObj = {...({
+    const tableObj = {...({
       order: []
     })};
     console.log('before:', tableObj);
@@ -141,9 +141,20 @@ export class TableTemplateService {
             tableObj[tableKey] = {...this.tableTemplates[table.template]};
             if (table.runOverrides){
     //           // tslint:disable-next-line:forin
-              for (const override in table.overrides){
-                tableObj[tableKey][override] = [...table.overrides[override]];
-                console.log(this.IDs, tableObj[tableKey][override]);
+              for (const override in table.overrides) {
+                if (table.overrides.hasOwnProperty(override)) {
+                  if (typeof override === 'object') {
+                    if (Array.isArray(override)) {
+                      tableObj[tableKey][override] = [...table.overrides[override]];
+                    } else {
+                      tableObj[tableKey][override] = {...table.overrides[override]};
+                    }
+                  } else {
+                    tableObj[tableKey][override] = table.overrides[override];
+                  }
+
+                  console.log(this.IDs, tableObj[tableKey][override]);
+                }
               }
             }
         }
@@ -151,5 +162,26 @@ export class TableTemplateService {
     }
     console.log('after:', tableObj);
     return tableObj;
+  }
+
+  tableDFrameGenerator(tablesList: object): any{
+    const dFrame = {};
+    const tables = {... tablesList};
+    delete tables['order'];
+    for (const table in tables){
+      if (tables.hasOwnProperty(table)){
+        console.log('table:', table);
+        dFrame[table] = {};
+        for (const row of tables[table].rows){
+          dFrame[table][row] = {};
+          for (const col in tables[table].row_template){
+            if (tables[table].row_template.hasOwnProperty(col)) {
+              dFrame[table][row][col] = tables[table].row_template[col].defaultValue;
+            }
+          }
+        }
+      }
+    }
+    return dFrame;
   }
 }

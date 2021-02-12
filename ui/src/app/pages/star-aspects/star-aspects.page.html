@@ -1,8 +1,8 @@
 <h2 class="star-aspects__head">Star Aspects</h2>
-<button type="button" (click)="computeDegDec()">COMPUTE</button>
+<button type="button">COMPUTE</button>
 
 <table>
-  <tr *ngFor="let tableset of tables.order">
+  <tr *ngFor="let tableset of tables.order; index as tableRow">
     <td *ngFor="let table of tableset">
       <table class="star-aspects__host-table">
         <tr>
@@ -18,16 +18,29 @@
               </tr>
               <tr *ngFor="let row of tables[table.key]['rows']">
                 <td *ngFor="let column_name of tables[table.key]['headers']">
-                  <span *ngIf="column_name=== tables[table.key]['headers'][0]">{{row}}</span>
-                  <span *ngIf="column_name!== tables[table.key]['headers'][0]">
-                    <input [type]="tables[table.key]['row_template'][column_name]['type']"
+<!--                  <span *ngIf="column_name=== tables[table.key]['headers'][0]">{{row}}</span>-->
+                  <span *ngIf="!tables[table.key]['row_template'].hasOwnProperty(column_name)">{{row}}</span>
+                  <span *ngIf="tables[table.key]['row_template'].hasOwnProperty(column_name)">
+                    <input type="number"
                            [min]="tables[table.key]['row_template'][column_name]['min']"
                            [max]="tables[table.key]['row_template'][column_name]['max']"
-                           [value]="tables[table.key]['row_template'][column_name]['defaultValue']"
-                           *ngIf="tables[table.key]['row_template'][column_name]['isInput']"
+                           [(ngModel)]="tablesDFrame[table.key][row][column_name]"
+
+                           *ngIf="tables[table.key]['row_template'][column_name]['isInput'] && tables[table.key]['row_template'][column_name]['type'] === 'number'"
+
+                           (keyup)="log(table.key, row, column_name); computeDegDec(row, tableRow, table.key, row, column_name)"
+                    >
+                    <input type="text"
+                           [min]="tables[table.key]['row_template'][column_name]['min']"
+                           [max]="tables[table.key]['row_template'][column_name]['max']"
+                           [(ngModel)]="tablesDFrame[table.key][row][column_name]"
+
+                           *ngIf="tables[table.key]['row_template'][column_name]['isInput'] && tables[table.key]['row_template'][column_name]['type'] === 'text'"
+
+                           (keyup)="log(table.key, row, column_name)"
                     >
                     <span *ngIf="!tables[table.key]['row_template'][column_name]['isInput']">
-                      {{tables[table.key]['row_template'][column_name]['defaultValue']}}
+                      {{tablesDFrame[table.key][row][column_name]}}
                     </span>
                   </span>
                 </td>
@@ -44,24 +57,85 @@
   </tr>
 </table>
 
-<!--
-
-<tr>
-    <th>ID</th>
-    <th *ngFor="let col_name of Columns;">
-      {{col_name.slice(0,2)}}
-    </th>
-  </tr>
-  <tr *ngFor="let id of IDs">
-    <td>{{id}}</td>
-    <td *ngFor="let col_name of Columns">
-    <span *ngIf="col_name==='LAG'"> <input type="number" min="0" max="12" value="{{value}}" name="LAG{{i}}"> </span>
-
-    <span *ngIf="col_name==='Deg'"> <input type="number" min="0" max="12" value="{{value}}" name="Deg{{i}}"></span>
-    <span *ngIf="col_name==='Min'"> <input type="number" min="0" max="12" value="{{value}}" name="Min{{i}}"></span>
-    <span *ngIf="col_name==='Sec'"> <input type="number" min="0" max="12" value="{{value}}" name="Sec{{i}}"></span>
-    <span *ngIf="col_name!=='LAG' && col_name!=='Deg' && col_name!=='Min' && col_name!=='Sec' && col_name!=='ID'">0</span>
-    </td>
-  </tr>
-
--->
+<!--<table>-->
+<!--  <tr>-->
+<!--    <td>-->
+<!--      <table class="star-aspects__host-table">-->
+<!--        <tr>-->
+<!--          <th>-->
+<!--            <h3 align="center">Lagnam</h3>-->
+<!--          </th>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--          <td>-->
+<!--            <table class="star-aspects__table star-aspects__table__lagnam">-->
+<!--              <tr>-->
+<!--                <th>ID</th>-->
+<!--                <th>L</th>-->
+<!--                <th>D</th>-->
+<!--                <th>M</th>-->
+<!--                <th>S</th>-->
+<!--                <th>To</th>-->
+<!--              </tr>-->
+<!--              <tr *ngFor="let id of IDs">-->
+<!--                <td>{{id}}</td>-->
+<!--                <td>-->
+<!--                  <input type="number" [(ngModel)]="lagnam[id]['L']" (keyup)="log(id)">-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                  <input type="number" [(ngModel)]="lagnam[id]['D']" (keyup)="log(id)">-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                  <input type="number" [(ngModel)]="lagnam[id]['M']" (keyup)="log(id)">-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                  <input type="number" [(ngModel)]="lagnam[id]['S']" (keyup)="log(id)">-->
+<!--                </td>-->
+<!--                <td>{{lagnam[1]['To']}}</td>-->
+<!--              </tr>-->
+<!--            </table>-->
+<!--          </td>-->
+<!--        </tr>-->
+<!--      </table>-->
+<!--    </td>-->
+<!--    <td>-->
+<!--      <table class="star-aspects__host-table">-->
+<!--        <tr>-->
+<!--          <th>-->
+<!--            <h3 align="center">PMZ - 1</h3>-->
+<!--          </th>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--          <td>-->
+<!--            <table class="star-aspects__table star-aspects__table__lagnam">-->
+<!--              <tr>-->
+<!--                <th>ID</th>-->
+<!--                <th>L</th>-->
+<!--                <th>D</th>-->
+<!--                <th>M</th>-->
+<!--                <th>S</th>-->
+<!--                <th>To</th>-->
+<!--              </tr>-->
+<!--              <tr *ngFor="let id of IDs">-->
+<!--                <td>{{id}}</td>-->
+<!--                <td>-->
+<!--                  <input type="number" [(ngModel)]="pmz1[id]['L']" (keyup)="log(id)">-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                  <input type="number" [(ngModel)]="pmz1[id]['D']" (keyup)="log(id)">-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                  <input type="number" [(ngModel)]="pmz1[id]['M']" (keyup)="log(id)">-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                  <input type="number" [(ngModel)]="pmz1[id]['S']" (keyup)="log(id)">-->
+<!--                </td>-->
+<!--                <td>{{lagnam[1]['To']}}</td>-->
+<!--              </tr>-->
+<!--            </table>-->
+<!--          </td>-->
+<!--        </tr>-->
+<!--      </table>-->
+<!--    </td>-->
+<!--  </tr>-->
+<!--</table>-->
