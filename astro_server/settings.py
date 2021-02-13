@@ -129,6 +129,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../astrology/static'))
+STATIC_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../static/varthan'))
 print(STATIC_PATH)
 STATIC_ROOT = STATIC_PATH
