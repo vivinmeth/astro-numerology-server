@@ -1,5 +1,5 @@
 <h2 class="star-aspects__head">Star Aspects</h2>
-<button type="button">COMPUTE</button>
+<button type="button" (click)="updateAllPZM()" [disabled]="updates.length === 0">Get Planets and Zodiac</button>
 
 <table>
   <tr *ngFor="let tableset of tables.order; index as tableRow">
@@ -26,9 +26,28 @@
                            [max]="tables[table.key]['row_template'][column_name]['max']"
                            [(ngModel)]="tablesDFrame[table.key][row][column_name]"
 
-                           *ngIf="tables[table.key]['row_template'][column_name]['isInput'] && tables[table.key]['row_template'][column_name]['type'] === 'number'"
+                           *ngIf="tables[table.key]['row_template'][column_name]['isInput'] &&
+                                  tables[table.key]['row_template'][column_name]['type'] === 'number' &&
+                                  tableRow !==1
+                                 "
 
-                           (keyup)="log(table.key, row, column_name); computeDegDec(row, tableRow, table.key, row, column_name)"
+                           (keyup)="onNotEnter($event, pzmIndexUpdateRev, table.key, row, column_name);
+                                    onNotEnter($event, computeDegDec, row, tableRow, table.key, row, column_name);
+                                    onEnter($event, updateAllPZM);"
+                    >
+                    <input type="number"
+                           [min]="tables[table.key]['row_template'][column_name]['min']"
+                           [max]="tables[table.key]['row_template'][column_name]['max']"
+                           [(ngModel)]="tablesDFrame[table.key][row][column_name]"
+
+                           *ngIf="tables[table.key]['row_template'][column_name]['isInput'] &&
+                                  tables[table.key]['row_template'][column_name]['type'] === 'number' &&
+                                  tableRow ===1
+                                 "
+                           (keyup)="onNotEnter($event, pzmIndexUpdate, table.key, row, column_name);
+                                    onNotEnter($event, computeDegDec, row, tableRow, table.key, row, column_name);
+                                    onEnter($event, updateAllPZM);"
+
                     >
                     <input type="text"
                            [min]="tables[table.key]['row_template'][column_name]['min']"
@@ -37,7 +56,7 @@
 
                            *ngIf="tables[table.key]['row_template'][column_name]['isInput'] && tables[table.key]['row_template'][column_name]['type'] === 'text'"
 
-                           (keyup)="log(table.key, row, column_name)"
+
                     >
                     <span *ngIf="!tables[table.key]['row_template'][column_name]['isInput']">
                       {{tablesDFrame[table.key][row][column_name]}}
